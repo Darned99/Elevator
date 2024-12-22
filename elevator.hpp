@@ -30,33 +30,17 @@ namespace bk {
             void setCurrentFloor(int CurrentFloor);
             int getCurrentFloor() const;
 
-            void setMaxFloor(int MaxFloor);
-            int getMaxFloor() const;
-
-            void setMinFloor(int MinFloor);
-            int getMinFloor() const;
-            
-
             // Funtions responsible for movement
-            void moveUp();
-            void moveDown();
-            void stop();
-            void moveToFloor(int destinationFloor);
-
             void MoveUp();
             void MoveDown();
+            void stop();
             void MoveToFloor();
 
-            // Functions for requests using FIFO queue
-            void addTargetFloor(int floor);            
-            int getNextTarget() const;
-            void processRequests();
+            void addTargetFloor(int floor);   
 
             const std::vector<int>& getBuffer() const;
-
-            int getQueueSize() const;
-            direction getDirection() const;
-
+            int getNextTarget() const;
+            
             ~Elevator();
     };
 };
