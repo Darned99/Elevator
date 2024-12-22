@@ -1,23 +1,36 @@
 #pragma once
+
 #include <iostream>
+#include <vector>
 #include "elevator.hpp"
 
+// Stałe systemowe
+constexpr int NUM_FLOORS = 30;
+constexpr int NUM_ELEVATORS = 5;
+constexpr int BUFF_SIZE = NUM_FLOORS;
 
-    // System WIP
-namespace bk{
-    class System{
-        private:
-            
-            double m_id;
-            
+namespace bk {
+    class System {
+    private:
+        std::vector<Elevator> elevators; // Kolekcja wind
+        void LinePrint(int length, int counter) const; // Pomocnicza metoda formatowania
 
-        public:
-           
-        // Potential methods for elevator system
-        void isAbove();
-        void isBelow();
+    public:
+        // Konstruktory
+        System();
+        System(int numElevators, int maxFloors);
 
-        void LinePrint(int length, int counter);
-        void elevatorStatus();
+        // Destruktor
+        ~System();
+
+        // Metody systemu
+        void performNextStep();
+        void elevatorStatus() const;
+        void addElevator(const Elevator& elevator);
+
+        // Metody pomocnicze
+        bool isAbove(int elevatorIndex, int floor) const;
+        bool isBelow(int elevatorIndex, int floor) const;
     };
 }
+

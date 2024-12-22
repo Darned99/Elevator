@@ -42,6 +42,7 @@ namespace bk{
         return m_CurrentFloor;
     }
 
+    /*
     void bk::Elevator::setMaxFloor(int MaxFloor){
         m_MaxFloor = MaxFloor;
     }
@@ -57,10 +58,12 @@ namespace bk{
     int bk::Elevator::getMinFloor() const {
         return m_MinFloor;
     }
-    
+    */
     
 
     //Elevator movement
+
+    /*
     void bk::Elevator::moveUp(){
         if(m_isOperational){
             if(m_CurrentFloor < m_MaxFloor){
@@ -101,20 +104,19 @@ namespace bk{
             }
         }
     }
-    //
+    */
+
 
     void bk::Elevator::MoveUp() {
         m_CurrentFloor++;
         std::cout << "Moving up to floor: " << m_CurrentFloor << std::endl;
 
-        // Sprawdź, czy aktualne piętro jest w buforze
         auto it = std::find(buffer.begin(), buffer.end(), m_CurrentFloor);
         if (it != buffer.end()) {
-            buffer.erase(it); // Usuń piętro z bufora
+            buffer.erase(it);
             std::cout << "Stopping at floor: " << m_CurrentFloor << std::endl;
         }
 
-        // Ustaw kierunek w górę, jeśli następne piętro w buforze jest wyższe
         if (!buffer.empty() && buffer.front() > m_CurrentFloor) {
             m_CurrentDirection = direction::up;
         }
@@ -124,51 +126,71 @@ namespace bk{
         m_CurrentFloor--;
         std::cout << "Moving down to floor: " << m_CurrentFloor << std::endl;
 
-        // Sprawdź, czy aktualne piętro jest w buforze
         auto it = std::find(buffer.begin(), buffer.end(), m_CurrentFloor);
         if (it != buffer.end()) {
-            buffer.erase(it); // Usuń piętro z bufora
+            buffer.erase(it);
             std::cout << "Stopping at floor: " << m_CurrentFloor << std::endl;
         }
 
-        // Ustaw kierunek w dół, jeśli następne piętro w buforze jest niższe
         if (!buffer.empty() && buffer.front() < m_CurrentFloor) {
             m_CurrentDirection = direction::down;
         }
     }
 
+
     void bk::Elevator::MoveToFloor() {
         if (buffer.empty()) {
-            std::cout << "No requests in buffer, elevator idle" << std::endl;
+            std::cout << "No requests in buffer, elevator idle." << std::endl;
             m_CurrentDirection = direction::idle;
             return;
         }
 
-        if (m_CurrentDirection == direction::up) {
-            MoveUp();
+        if (m_CurrentFloor == buffer.front()) {
+            std::cout << "Stopping at floor: " << m_CurrentFloor << std::endl;
+            buffer.erase(buffer.begin());
         }
-        else if (m_CurrentDirection == direction::down){
-            MoveDown();
-        }
-        else {
-            if(buffer.front() > m_CurrentDirection) {
+
+        if (!buffer.empty()) {
+            if (buffer.front() > m_CurrentFloor) {
                 m_CurrentDirection = direction::up;
+                MoveUp();
             }
             else {
                 m_CurrentDirection = direction::down;
+                MoveDown();
             }
         }
     }
 
-    void bk::Elevator::addTargetFloor(int floor){
-        if(floor >= m_MinFloor && floor <= m_MaxFloor){
-            buffer.push_back(floor);
-            std::sort(buffer.begin(), buffer.end());
-            std::cout << "Added target floor: " << floor << std::endl;
-        }
-        else {
+
+    void bk::Elevator::addTargetFloor(int floor) {
+        if (floor < m_MinFloor || floor > m_MaxFloor) {
+            
             std::cout << "Invalid floor request: " << floor << std::endl;
-         }
+            return;
+        }
+
+        if (std::find(buffer.begin(), buffer.end(), floor) == buffer.end()) {
+            
+            buffer.push_back(floor);
+            std::cout << "Added target floor: " << floor << std::endl;
+
+            if (m_CurrentDirection == direction::up) {
+                std::sort(buffer.begin(), buffer.end());
+            } 
+            else if (m_CurrentDirection == direction::down) {
+                std::sort(buffer.rbegin(), buffer.rend());
+            }
+        }
+    }
+
+
+    const std::vector<int>& bk::Elevator::getBuffer() const {
+        return buffer;
+    }
+   
+    int bk::Elevator::getNextTarget() const {
+        return buffer.empty() ? m_CurrentFloor : buffer.front();
     }
 
 

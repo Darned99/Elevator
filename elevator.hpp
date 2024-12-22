@@ -49,8 +49,10 @@ namespace bk {
 
             // Functions for requests using FIFO queue
             void addTargetFloor(int floor);            
-            int getNextTarget();
+            int getNextTarget() const;
             void processRequests();
+
+            const std::vector<int>& getBuffer() const;
 
             int getQueueSize() const;
             direction getDirection() const;
